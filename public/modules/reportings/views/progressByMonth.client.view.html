@@ -1,0 +1,60 @@
+<section class="content">
+	<section class="container text-center">
+		<section data-ng-controller="ReportingsController" data-ng-init="ProgressReport()">
+
+			<nvd3-cumulative-line-chart
+					data="exampleData"
+					id="isAreaExample"
+					width="550"
+					height="350"
+					showXAxis="true"
+					showYAxis="true"
+					isArea="true"
+					margin="{left:70,top:70,bottom:70,right:125}">
+				<svg></svg>
+			</nvd3-cumulative-line-chart>
+
+			<div class="row">
+				<div class="col-md-12 text-center">
+					<h3>Finished by date</h3>
+				</div>
+
+				<div class="col-md-6 text-left">
+					<table st-table="displayedCollection" st-safe-src="rowCollection" class="table table-striped">
+						<thead>
+						<tr>
+							<th>Date</th>
+							<th>Finished PUS</th>
+
+						</tr>
+						</thead>
+						<tbody>
+						<tr ng-repeat="row in displayedCollection">
+							<td>{{row._id.year}}-{{row._id.month}}-{{row._id.day}}</td></a>
+							<td>{{row.count}}</td>
+						</tr>
+						</tbody>
+						<tfoot>
+						<tr>
+							<td colspan="5" class="text-center">
+								<div st-pagination="" st-items-by-page="20" st-displayed-pages="7"></div>
+							</td>
+						</tr>
+						</tfoot>
+					</table>
+					<!--<img data-ng-init="ProgressReport()" >
+						<nvd3-stacked-area-chart
+								data="exampleData"
+								id="exampleId"
+								showXAxis="true"
+								showYAxis="true"
+								width="550"
+								height="350">
+							<svg></svg>
+						</nvd3-stacked-area-chart>
+					</img>-->
+				</div>
+			</div>
+		</section>
+	</section>
+</section>

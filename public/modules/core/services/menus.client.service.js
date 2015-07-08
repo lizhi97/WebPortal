@@ -1,7 +1,8 @@
 'use strict';
 
 //Menu service used for managing  menus
-angular.module('core').service('Menus', [
+var myModule = angular.module('core');
+myModule.service('Menus', [
 
 	function() {
 		// Define a set of default roles
@@ -10,7 +11,7 @@ angular.module('core').service('Menus', [
 		// Define the menus object
 		this.menus = {};
 
-		// A private function for rendering decision 
+		// A private function for rendering decision
 		var shouldRender = function(user) {
 			if (user) {
 				if (!!~this.roles.indexOf('*')) {
@@ -56,7 +57,7 @@ angular.module('core').service('Menus', [
 		};
 
 		// Add new menu object by menu id
-		this.addMenu = function(menuId, isPublic, roles) {
+		this.addMenu = function(menuId, isPublic, roles, position) {
 			// Create the new menu
 			this.menus[menuId] = {
 				isPublic: isPublic || false,
@@ -66,7 +67,9 @@ angular.module('core').service('Menus', [
 			};
 
 			// Return the menu object
+			//console.log(this.menus);
 			return this.menus[menuId];
+
 		};
 
 		// Remove existing menu object by menu id
@@ -164,3 +167,23 @@ angular.module('core').service('Menus', [
 		this.addMenu('topbar');
 	}
 ]);
+
+myModule.factory('GetPUSData', ['$resource',
+	function($resource){
+		return $resource('/getSumaryData');
+	}
+]);
+
+
+myModule.factory('GetFailedFinishedPUS', ['$resource',
+	function($resource){
+		return $resource('/getFinishedFailedPUS');
+	}
+]);
+
+myModule.factory('GetFinishedAllPUS', ['$resource',
+	function($resource){
+		return $resource('/getFinishedAllPUS');
+	}
+]);
+

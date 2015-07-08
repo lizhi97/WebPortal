@@ -1,0 +1,39 @@
+<section class="content">
+	<section class="container">
+		<section data-ng-controller="ReportingsController" data-ng-init="getFailedPassedList()">
+			Failure percentage
+			<table st-table="displayedCollection" st-safe-src="rowCollection" class="table table-striped">
+				<thead>
+				<tr>
+					<th>PUS table name</th>
+					<th>Creator</th>
+					<th>Team</th>
+					<th>failure times</th>
+					<th>Passed times</th>
+					<th>Failure percentage</th>
+
+				</tr>
+				</thead>
+				<tbody>
+				<tr ng-repeat="row in displayedCollection">
+					<td>{{row._id.name}}</td></a>
+					<td>{{row._id.creator}}</td>
+					<td>{{row._id.team}}</td>
+					<td>{{row.totalFailed}}</td>
+					<td>{{row.totalPassed}}</td>
+					<td>{{row.totalFailed/(row.totalFailed + row.totalPassed) | percentage:2}}</td>
+				</tr>
+				</tbody>
+				<tfoot>
+				<tr>
+					<td colspan="5" class="text-center">
+						<div st-pagination="" st-items-by-page="20" st-displayed-pages="7"></div>
+					</td>
+				</tr>
+				</tfoot>
+			</table>
+
+
+		</section>
+	</section>
+</section>

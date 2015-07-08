@@ -1,94 +1,83 @@
-<section data-ng-controller="HomeController">
-	<div class="jumbotron text-center">
-		<div class="row">
-			<div class="col-md-6 col-md-offset-3 col-sm-6 col-sm-offset-3 col-xs-12">
-				<img alt="MEAN.JS" class="img-responsive text-center" src="modules/core/img/brand/logo.png" />
+<section class="content">
+	<section class="container">
+		<section data-ng-controller="HomeController">
+			<div class="container" style="width: 100%;">
+				<div class="row">
+					<div class="col-md-6 text-center">
+						<h3>All Automated PUS</h3>
+					</div>
+					<div class="col-md-6 text-center">
+						<h3>ALL PUS</h3>
+					</div>
+				</div>
+				<div class="row">
+					<div class="theme-table-image col-sm-6">
+						<img class="img-rounded" data-ng-init="finishedFailureAll()">
+						<nvd3-pie-chart
+								data="exampleData1"
+								id="fishedFailed"
+								width="550"
+								height="350"
+								x="xFunction()"
+								y="yFunction()"
+								color="FFColor()"
+								showLegend="true"
+								legendColor="FFColor()"
+								tooltips="true"
+								showLabels="true">
+							<svg></svg>
+						</nvd3-pie-chart>
+						</img>
+					</div>
+					<div class="theme-table-image col-sm-6">
+						<img class="img-rounded" data-ng-init="finishedAll()">
+						<nvd3-pie-chart
+								data="finishedAllData"
+								id="fishedLeft"
+								width="550"
+								height="350"
+								x="xFunction()"
+								y="yFunction()"
+								color="FAColor()"
+								showLegend="true"
+								legendColor="FAColor()"
+								tooltips="true"
+								showLabels="true">
+							<svg></svg>
+						</nvd3-pie-chart>
+						</img>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12 text-center">
+						<h3>All Components status(x10)</h3>
+					</div>
+					<div class="col-md-12 text-center">
+						<img data-ng-init="getComponentData()">
+						<nvd3-multi-bar-horizontal-chart
+								data="exampleData"
+								id="exampleId"
+								xAxisTickFormat="xAxisTickFormatFunction()"
+								yAxisTickFormat="yAxisTickFormatFunction()"
+								showValues="true"
+								valueFormat="valueFormatFunction()"
+								width="1000"
+								height="600"
+								margin="{left:130,top:0,bottom:0,right:0}"
+								showXAxis="true"
+								showYAxis="true"
+								interactive="true"
+								tooltips="true"
+								color="componentColor()"
+								showLegend="true"
+								legendColor="componentColor()">
+							<svg></svg>
+						</nvd3-multi-bar-horizontal-chart>
+						</img>
+					</div>
+				</div>
+
 			</div>
-		</div>
-		<br>
-		<div class="row">
-			<p class="lead">
-				Open-Source Full-Stack Solution For MEAN Applications
-			</p>
-		</div>
-		<div class="row">
-			<p>
-				<a class="btn btn-primary btn-lg" href="http://meanjs.org" target="_blank">Learn more</a>
-			</p>
-		</div>
-	</div>
-	<div>
-		<h2>Congrats! You've configured and ran the sample application successfully.</h2>
-		<p>MEAN.JS is a web application boilerplate, which means you should start changing everything :-)</p>
-		<p>This sample application tracks users and articles.</p>
-		<ul>
-			<li>
-				Click
-				<em>Signup</em>
-				to get started.
-			</li>
-			<li>
-				Configure your app to work with your social accounts, by editing the
-				<em>/config/env/*.js</em>
-				files.
-			</li>
-			<li>
-				Edit your users module.
-			</li>
-			<li>
-				Add new CRUD modules.
-			</li>
-			<li>
-				Have fun...
-			</li>
-		</ul>
-	</div>
-	<div class="row">
-		<div class="col-md-3">
-			<h2>
-				<strong>M</strong>ongoDB
-			</h2>
-			<p><a target="_blank" href="http://mongodb.org/">MongoDB</a> is a database. MongoDB's <a target="_blank" href="http://docs.mongodb.org/manual/">great manual</a> is the place to get started with NoSQL and MongoDB.</p>
-		</div>
-		<div class="col-md-3">
-			<h2>
-				<strong>E</strong>xpress
-			</h2>
-			<p><a target="_blank" href="http://expressjs.com/"> Express</a> is an app server. Check out <a target="_blank" href="http://expressjs.com/4x/api.html">The ExpressJS API reference for more information</a> or <a target="_blank" href="http://stackoverflow.com/questions/8144214/learning-express-for-node-js">StackOverflow</a> for more info.</p>
-		</div>
-		<div class="col-md-3">
-			<h2>
-				<strong>A</strong>ngularJS
-			</h2>
-			<p>AngularJS is web app framework. <a target="_blank" href="http://angularjs.org/">Angular's website</a> offers a lot. The <a target="_blank" href="http://www.thinkster.io/">Thinkster Popular Guide</a> and <a target="_blank" href="https://egghead.io/">Egghead Videos</a> are great resources.</p>
-		</div>
-		<div class="col-md-3">
-			<h2>
-				<strong>N</strong>ode.js
-			</h2>
-			<p><a target="_blank" href="http://nodejs.org/">Node.js</a> is a web server. Node's website and this <a target="_blank" href="http://stackoverflow.com/questions/2353818/how-do-i-get-started-with-node-js">stackOverflow thread</a> offer excellent starting points to get to grasps with node.</p>
-		</div>
-	</div>
-	<div class="well">
-		<h2>MEAN.JS Documentation</h2>
-		<p>
-			Once you're familiar with the foundation technology, check out the MEAN.JS Documentation:
-			<ul>
-				<li><a target="_blank" href="http://meanjs.org/docs.html">MEAN.JS Documentation</a>
-				</li>
-				<li><a target="_blank" href="http://meanjs.org/generator.html">Yeoman Generator</a>
-				</li>
-				<li><a target="_blank" href="http://meanjs.org/modules.html">Modules</a>
-				</li>
-				<li><a target="_blank" href="http://meanjs.org/changelog.html">Changelog</a>
-				</li>
-				<li><a target="_blank" href="http://meanjs.org/community.html">Community</a>
-				</li>
-				<li><a target="_blank" href="http://blog.meanjs.org">Blog</a>
-				</li>
-			</ul>
-		</p>
-	</div>
-	<br>Enjoy &amp; Keep Us Updated,
-	<br>The MEAN.JS Team.
+		</section>
+	</section>
 </section>

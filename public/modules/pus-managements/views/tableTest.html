@@ -1,0 +1,53 @@
+<section class="content">
+	<section class="container">
+		<section data-ng-controller="PusManagementsController" data-ng-init="showTable()">
+			<table st-table="displayedCollection" st-safe-src="rowCollection" class="table table-striped">
+				<thead>
+				<tr>
+					<th st-sort="name">PUS table name</th>
+					<th st-sort="creator">Creator</th>
+					<!--<th>Reviewer</th>-->
+					<th st-sort="team">Team</th>
+					<th st-sort="component">Component</th>
+					<th st-sort="PUSStatus">Status</th>
+					<th st-sort="SUTHost">Run Host</th>
+					<th st-sort="disableToRun">disableToRun</th>
+					<!--  <th>Test Type</th>-->
+					<th st-sort="created">Create date</th>
+				<!--	<th>RunStatus</th>-->
+					<th>Operation<th>
+				</tr>
+				<tr>
+
+					<th colspan="3">
+						<input st-search  class="form-control" placeholder="global search ..." type="text"/></th>
+					</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr ng-repeat="row in displayedCollection  | orderBy: 'component':false">
+					<td>{{row.name}}</td></a>
+					<td>{{row.creator}}</td>
+				<!--	<td>{{row.reviewer}}</td>-->
+					<td>{{row.team}}</td>
+					<td>{{row.component}}</td>
+					<td>{{row.PUSStatus ==='' ? 'Not run': row.PUSStatus}}</td>
+					<td>{{row.SUTHost}}</td>
+					<td>{{row.disableToRun}}</td>
+                   <!-- <td>{{row.testType}}</td>-->
+					<td>{{row.created | date:'MM/dd/yyyy'}}</td>
+					<!--<td>{{row.runStatus ===1 ? 'Yes' : 'No'}}</td>-->
+					<td><a ng-href="#!/pus-managements/{{row._id}}">Detailed</a>
+				</tr>
+				</tbody>
+				<tfoot>
+				<tr>
+					<td colspan="5" class="text-center">
+						<div st-pagination="" st-items-by-page="20" st-displayed-pages="7"></div>
+					</td>
+				</tr>
+				</tfoot>
+			</table>
+		</section>
+	</section>
+</section>

@@ -1,0 +1,67 @@
+<section class="content">
+	<section class="container text-center">
+		<section data-ng-controller="ReportingsController">
+			<div class="row">
+				<div class="col-md-12 text-center">
+					<h3>Team Progress</h3>
+				</div>
+				<div class="col-md-12 text-center">
+					<img data-ng-init="teamReport()" >
+					<nvd3-multi-bar-chart
+							data="teamData"
+							id="teamID"
+							showValues="true"
+							valueFormat="valueFormatFunction()"
+							width="1000"
+							height="550"
+							margin="{left:130,top:0,bottom:0,right:0}"
+							showXAxis="true"
+							showYAxis="true"
+							interactive="true"
+							tooltips="true"
+							color="colorFunction()"
+							legendColor="colorFunction()"
+							showLegend="true">
+						<svg></svg>
+					</nvd3-multi-bar-chart>
+
+					</img>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12 text-left">
+					<h3>Personal progress</h3>
+				</div>
+				<div class="col-md-6 text-left">
+					<section data-ng-controller="ReportingsController" data-ng-init="getCreatedReport()">
+						Team created PUS amount
+						<table st-table="displayedCollection" st-safe-src="rowCollection" class="table table-striped">
+							<thead>
+							<tr>
+								<th>Creator</th>
+								<th>amount</th>
+
+							</tr>
+							</thead>
+							<tbody>
+							<tr ng-repeat="row in displayedCollection">
+								<td>{{row._id.creator}}</td>
+								<td>{{row.count}}</td>
+							</tr>
+							</tbody>
+							<tfoot>
+							<tr>
+								<td colspan="5" class="text-center">
+									<div st-pagination="" st-items-by-page="40" st-displayed-pages="7"></div>
+								</td>
+							</tr>
+							</tfoot>
+						</table>
+
+
+					</section>
+				</div>
+			</div>
+		</section>
+	</section>
+</section>

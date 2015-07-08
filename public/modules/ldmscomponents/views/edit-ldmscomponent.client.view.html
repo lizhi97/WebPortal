@@ -1,0 +1,36 @@
+<section class="content">
+	<section class="container">
+		<section data-ng-controller="LdmscomponentsController" data-ng-init="findOne()">
+			<div class="page-header">
+				<h1>Edit LDMS Component</h1>
+			</div>
+			<div class="col-md-12">
+				<form class="form-horizontal" data-ng-submit="update()" novalidate>
+					<fieldset>
+						<div class="form-group">
+							<label class="control-label" for="name">Component Name</label>
+							<div class="controls">
+								<input type="text" data-ng-model="ldmscomponent.name" id="name" class="form-control" placeholder="Name" required>
+							</div>
+							<label class="control-label" for="name">Total Tests</label>
+							<div>
+								<input type="text" data-ng-model="ldmscomponent.totalTests" id="name" class="form-control" placeholder="Tests Amount" required>
+							</div>
+							<label class="control-label" for="name">Team Name</label>
+							<div>
+								<select ng-model="ldmscomponent.team"
+										ng-options="c for c in teams"></select>
+							</div>
+						</div>
+						<div class="form-group">
+							<input type="submit" value="Update" class="btn btn-default">
+						</div>
+						<div data-ng-show="error" class="text-danger">
+							<strong data-ng-bind="error"></strong>
+						</div>
+					</fieldset>
+				</form>
+			</div>
+		</section>
+	</section>
+</section>

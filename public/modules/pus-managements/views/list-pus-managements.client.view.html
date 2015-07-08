@@ -1,0 +1,31 @@
+<section class="content">
+	<section class="container">
+		<section data-ng-controller="PusManagementsController" data-ng-init="find()">
+			<div class="page-header">
+				<h1>List PUS</h1>
+			</div>
+			<div class="list-group">
+				<a data-ng-repeat="pusManagement in pusManagements" data-ng-href="#!/pus-managements/{{pusManagement._id}}" class="list-group-item">
+					<small class="list-group-item-text">
+						Posted on
+						<span data-ng-bind="pusManagement.created | date:'medium'"></span>
+						by
+						<span data-ng-bind="pusManagement.user.displayName"></span>
+					</small>
+					<h4 class="list-group-item-heading" data-ng-bind="pusManagement.name"></h4>
+					<h4 class="list-group-item-heading" data-ng-bind="pusManagement.reviewer"></h4>
+					<h4 class="list-group-item-heading" data-ng-bind="pusManagement.team"></h4>
+					<h4 class="list-group-item-heading" data-ng-bind="pusManagement.creator"></h4>
+					<h4 class="list-group-item-heading" data-ng-bind="pusManagement.component"></h4>
+					<h4 class="list-group-item-heading" data-ng-bind="pusManagement.serverType"></h4>
+					<h4 class="list-group-item-heading" data-ng-bind="pusManagement.SUTHost"></h4>
+					<h4 class="list-group-item-heading" data-ng-bind="pusManagement.branch"></h4>
+					<h4 class="list-group-item-heading" data-ng-bind="pusManagement.testType"></h4>
+				</a>
+			</div>
+			<div class="alert alert-warning text-center" data-ng-hide="!pusManagements.$resolved || pusManagements.length">
+				No Pus managements yet, why don't you <a href="/#!/pus-managements/create">create one</a>?
+			</div>
+		</section>
+	</section>
+</section>

@@ -38,7 +38,10 @@
 	{% for cssFile in cssFiles %}
 		<link rel="stylesheet" href="{{cssFile}}">
 	{% endfor %}
-
+	<link rel="stylesheet" href="lib/nvd3/nv.d3.css"/>
+	<link rel="stylesheet" type="text/css" href="lib/angular-tree-control/css/tree-control.css">
+	<!-- link for CSS when using the tree as an attribute -->
+	<link rel="stylesheet" type="text/css" href="lib/angular-tree-control/css/tree-control-attribute.css">
 	<!-- HTML5 Shim -->
 	<!--[if lt IE 9]>
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -46,12 +49,15 @@
 </head>
 
 <body class="ng-cloak">
+
 	<header data-ng-include="'/modules/core/views/header.client.view.html'" class="navbar navbar-fixed-top navbar-inverse"></header>
-	<section class="content">
-		<section class="container">
+	<!--<section class="content">
+		<section class="container">-->
 			{% block content %}{% endblock %}
+<!--
 		</section>
 	</section>
+-->
 
 	<!--Embedding The User Object-->
 	<script type="text/javascript">
@@ -61,8 +67,13 @@
 	<!--Application JavaScript Files-->
 	{% for jsFile in jsFiles %}
 		<script type="text/javascript" src="{{jsFile}}"></script>
-	{% endfor %}
 
+	{% endfor %}
+	<script type="text/javascript" src="lib/angular-smart-table/smart-table.min.js"></script>
+	<script src="lib/d3/d3.js"></script>
+	<script src="lib/nvd3/nv.d3.js"></script>
+	<script src="lib/angularjs-nvd3-directives/dist/angularjs-nvd3-directives.js"></script>
+	<script type="text/javascript" src="lib/angular-tree-control/angular-tree-control.js"></script>
 	{% if process.env.NODE_ENV === 'development' %}
 	<!--Livereload script rendered -->
 	<script type="text/javascript" src="http://{{request.hostname}}:35729/livereload.js"></script>

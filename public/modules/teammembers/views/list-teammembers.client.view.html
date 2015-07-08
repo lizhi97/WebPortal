@@ -1,0 +1,27 @@
+<section class="content">
+	<section class="container">
+		<section data-ng-controller="TeammembersController" data-ng-init="find()">
+			<div class="page-header">
+				<h1>Team members</h1>
+			</div>
+			<div class="list-group">
+				<a data-ng-repeat="teammember in teammembers" data-ng-href="#!/teammembers/{{teammember._id}}" class="list-group-item">
+					<small class="list-group-item-text">
+						Posted on
+						<span data-ng-bind="teammember.created | date:'medium'"></span>
+						by
+						<span data-ng-bind="teammember.user.displayName"></span>
+					</small>
+					<h4 class="list-group-item-heading" data-ng-bind="teammember.name"></h4>
+					<h4 class="list-group-item-heading" data-ng-bind="teammember.email"></h4>
+					<h4 class="list-group-item-heading" data-ng-bind="teammember.team"></h4>
+
+
+				</a>
+			</div>
+			<div class="alert alert-warning text-center" data-ng-hide="!teammembers.$resolved || teammembers.length">
+				No Teammembers yet, why don't you <a href="/#!/teammembers/create">create one</a>?
+			</div>
+		</section>
+	</section>
+</section>
