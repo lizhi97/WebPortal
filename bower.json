@@ -13,6 +13,8 @@
     "angular-ui-router": "~0.2.11",
     "angular-chart": "~0.2.6",
     "d3": "~3.5.5",
-    "angularjs-nvd3-directives": "~0.0.7"
+    "angularjs-nvd3-directives": "~0.0.7",
+	"angular-smart-table": "~1.2.28",
+	"angular-tree-control": "~0.2.9"
   }
 }

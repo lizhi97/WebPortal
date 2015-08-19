@@ -66,15 +66,16 @@ function process_delete_log(fn){
 				run_id: '$run_log._id',
 				name: '$name'
 			}
-		}
+			}
 		}
 	]).exec(function(err,Nums){
 		if (err) {
 			console.log(errorHandler.getErrorMessage(err));
 		} else {
 			var deleteID = {};
+			var j = 0;
 			for (var i = 0; i < Nums.length; i++) {
-				var hour = (Nums[i]._id.hour + 8) % 24;
+				var hour = (Nums[i]._id.hour +8) % 24;
 				if (hour >= 8) {
 					if (hour < 21) {
 						deleteID = {'id': Nums[i]._id.id, 'hour': hour, 'run_id': Nums[i]._id.run_id, 'name':Nums[i]._id.name};
@@ -94,10 +95,58 @@ function deteleteManualRunLog() {
 			function (errUpdate, val) {
 
 			});
+
+
+		//res.jsonp(deleteIDs);
+
+	});
+}
+
+function getTeamNames(team, fn){
+	Teammember.aggregate([
+		{$match :{ team : team }},
+		{ $project : { _id: 0 , name : 1 } }
+	]).exec(function(err,Nums){
+		if (err) {
+			return errorHandler.getErrorMessage(err);
+		} else {
+			var names = [];
+			for (var i = 0 ; i < Nums.length; i++){
+				names[i] = Nums[i].name;
+			}
+			fn(names);
+		}
 	});
 }
 
 function getTeamData(team, status, fn){
+	getTeamNames(team, function(Names){
+		PusManagement.aggregate([
+			{ $match : {
+				$and:[
+					{creator: {$in: Names}},
+					{PUSStatus: {$eq: status}}
+				]
+			}
+			},
+			{$group: {_id: null, count: {$sum:1}}}
+		]).exec(function(err,Nums){
+			if (err) {
+				return errorHandler.getErrorMessage(err);
+			} else {
+				//console.log(Nums[0].count);
+				if(Nums.length === 1) {
+					fn(Nums[0].count);
+				}else{
+					fn(0);
+				}
+			}
+		});
+	});
+
+}
+
+/*function getTeamData(team, status, fn){
 	PusManagement.aggregate([
 		{ $match : {
 			$and:[
@@ -119,7 +168,7 @@ function getTeamData(team, status, fn){
 			}
 		}
 	});
-}
+}*/
 
 function getTeamStatusData(team, fn){
 	getTeamData(team,'Success',function(teamPassed){
@@ -134,7 +183,7 @@ function getTeamStatusData(team, fn){
 				//res.jsonp(teamData);
 			});
 		});
-	});
+});
 }
 exports.getTeamReport = function(req, res) {
 	var teamData = [];
@@ -243,6 +292,7 @@ exports.getCreatedByDate = function(req, res){
 };
 exports.testRead = function(req, res){
 	var str = req.param('c');
+	//var str = "How are you doing today?";
 	var qFiled = str.split('_');
 	//http://172.29.40.58:3000/PUS-tests?c=Lion_LD96_AMT_PUS
 
@@ -253,24 +303,24 @@ exports.testRead = function(req, res){
 		.where('testType').equals(qFiled[3])
 		.where('disableToRun').equals(0)
 		.populate('user', 'displayName').exec(function(err, pusManagement) {
-			if (err) return res.send(err);
-			if (! pusManagement) return res.send(new Error('Failed to load Pus tests ' + str));
-			//req.pusManagement = pusManagement ;
+		if (err) return res.send(err);
+		if (! pusManagement) return res.send(new Error('Failed to load Pus tests ' + str));
+		//req.pusManagement = pusManagement ;
 
-			var arr='';
-			for (var i = 0; i < pusManagement.length; i++){
-				//if(i === 0) arr='\"';
-				arr = arr.concat(pusManagement[i].get('name'));
-				if (i < pusManagement.length-1) {
-					arr = arr.concat(' ');
-				}
-				// else{
-				//	arr= arr.concat('\"');
-				//}
+		var arr='';
+		for (var i = 0; i < pusManagement.length; i++){
+			//if(i === 0) arr='\"';
+			arr = arr.concat(pusManagement[i].get('name'));
+			if (i < pusManagement.length-1) {
+				arr = arr.concat(' ');
 			}
-			res.send(arr);
-			//res.send(pusManagement);
-		});
+			// else{
+			//	arr= arr.concat('\"');
+			//}
+		}
+		res.send(arr);
+		//res.send(pusManagement);
+	});
 };
 exports.getAllLogs = function(req,res) {
 	deteleteManualRunLog(); //deleted manual log
@@ -310,7 +360,7 @@ exports.getAllLogs = function(req,res) {
 				res.send(exception);
 			}
 		})();
-	});å
+	});
 };
 exports.getLatestFailedTests = function(req, res) {
 	PusManagement.find().select({ 'name': 1, 'team': 1,'creator' :1,'component':1,
@@ -355,9 +405,9 @@ function processCollection(collection, callback) {
 			}
 
 			if (coll.length === 0) {
-				callback(myObject);
+					callback(myObject);
 			} else {
-				processOne();
+					processOne();
 			}
 
 		} catch (exception) {
@@ -381,9 +431,9 @@ exports.getTop10Failure = function(req,res){
 				totalFailed:
 				{$sum: {
 					$cond: [{$and :[{$eq: ['$run_log.status','Failure']},
-						{$gt: ['$run_log.runDate',cutoff]}
-					]},
-						1,0]}
+									 {$gt: ['$run_log.runDate',cutoff]}
+							]},
+							1,0]}
 				}
 			}
 		},
@@ -394,7 +444,7 @@ exports.getTop10Failure = function(req,res){
 		if (Err) res.send(Err);
 		res.send(top10FailedPUS);
 
-	});
+		});
 };
 
 exports.getFailurePassedList = function(req,res){
@@ -509,37 +559,37 @@ exports.getSumary = function(req,res){
 		(function processOne() {
 			var record = coll.splice(0, 1)[0]; // get the first record of coll and reduce coll by one
 			try {
-				var componentName = record._id;
-				var oneRecord = {};
-				oneRecord.Component = componentName;
-				oneRecord.FinishedCount = record.count/10.0;
-				var finishedCount = record.count;
-				PusManagement.aggregate([{ $match : { PUSStatus : 'Failure',component:componentName}},
-					{ $group: {_id: '$component', count: { $sum: 1  }}}], function (failureErr, failedPUS) {
-					if (err) res.send(failureErr);
-					var failedCount = 0;
-					if(failedPUS === undefined || failedPUS.length === 0){
-						failedCount = 0;
-					} else {
-						failedCount = failedPUS[0].count;
-						//console.log(failedCount);
-					}
-					oneRecord.failedCount = failedCount/10.0;
-					//get count from LDMSComponent
-					Ldmscomponent.findOne().where('name').equals(componentName).select({'totalTests': 1})
-						.exec(function (FetchPusErr, ComponentPUS) {
-							if (FetchPusErr) return res.send(FetchPusErr);
-							if (!ComponentPUS) return res.send(new Error('Failed to load Pus tests ' + ComponentPUS));
-							oneRecord.totalPUS = ComponentPUS.totalTests/10.0;
-							myObject[i] = oneRecord;
-							i++;
-							if (coll.length === 0) {
-								res.json(myObject);
-							} else {
-								processOne();
-							}
-						});
-				});
+					var componentName = record._id;
+					var oneRecord = {};
+					oneRecord.Component = componentName;
+					oneRecord.FinishedCount = record.count/10.0;
+					var finishedCount = record.count;
+					PusManagement.aggregate([{ $match : { PUSStatus : 'Failure',component:componentName}},
+						{ $group: {_id: '$component', count: { $sum: 1  }}}], function (failureErr, failedPUS) {
+						if (err) res.send(failureErr);
+						var failedCount = 0;
+						if(failedPUS === undefined || failedPUS.length === 0){
+							failedCount = 0;
+						} else {
+							failedCount = failedPUS[0].count;
+							//console.log(failedCount);
+						}
+						oneRecord.failedCount = failedCount/10.0;
+						//get count from LDMSComponent
+						Ldmscomponent.findOne().where('name').equals(componentName).select({'totalTests': 1})
+							.exec(function (FetchPusErr, ComponentPUS) {
+								if (FetchPusErr) return res.send(FetchPusErr);
+								if (!ComponentPUS) return res.send(new Error('Failed to load Pus tests ' + ComponentPUS));
+								oneRecord.totalPUS = ComponentPUS.totalTests/10.0;
+								myObject[i] = oneRecord;
+								i++;
+								if (coll.length === 0) {
+									res.json(myObject);
+								} else {
+									processOne();
+								}
+							});
+					});
 			} catch (exception) {
 				res.send(new Error('Failed to load Pus tests '));
 			}
@@ -550,63 +600,63 @@ exports.getSumary = function(req,res){
 
 
 /*exports.getLatestFailedTests = function(req, res) {
- PusManagement.find().sort('component').populate('user', 'displayName').exec(function (err, pusManagements) {
- if (err) {
- return res.status(400).send({
- message: errorHandler.getErrorMessage(err)
- });
- } else {
- processCollection(pusManagements, function (FailedPUS) {
- res.jsonp(FailedPUS);
- });
+	PusManagement.find().sort('component').populate('user', 'displayName').exec(function (err, pusManagements) {
+		if (err) {
+			return res.status(400).send({
+				message: errorHandler.getErrorMessage(err)
+			});
+		} else {
+			processCollection(pusManagements, function (FailedPUS) {
+				res.jsonp(FailedPUS);
+			});
 
- }
- });
- };
- */
+		}
+	});
+};
+*/
 
 /*exports.getLatestFailedTests = function(req, res) {
- //1. get all PUS
- //		2.	for one PUS
- //		3. check the last run_log, if status is 'Failure'. push the PUS to Object.
- PusManagement.find().sort('component').populate('user', 'displayName').exec(function (err, pusManagements) {
- if (err) {
- return res.status(400).send({
- message: errorHandler.getErrorMessage(err)
- });
- } else {
- var myObject = [];
- var i = 0;
- (pusManagements).forEach(function(item) {
- var logs = [];
- logs = item.run_log;
- logs.sort(sort_by('runDate', false, function (a) {
- return new Date(a);
- }));
- item.run_log=logs.pop();
- if((item.run_log[0].status) === 'Failure') {
- myObject[i] = item;
- i++;
- }
- });
- res.jsonp(myObject);
- }
- });
- };
- */
+	//1. get all PUS
+	//		2.	for one PUS
+	//		3. check the last run_log, if status is 'Failure'. push the PUS to Object.
+	PusManagement.find().sort('component').populate('user', 'displayName').exec(function (err, pusManagements) {
+		if (err) {
+			return res.status(400).send({
+				message: errorHandler.getErrorMessage(err)
+			});
+		} else {
+			var myObject = [];
+			var i = 0;
+			(pusManagements).forEach(function(item) {
+				var logs = [];
+				logs = item.run_log;
+				logs.sort(sort_by('runDate', false, function (a) {
+					return new Date(a);
+				}));
+				item.run_log=logs.pop();
+				if((item.run_log[0].status) === 'Failure') {
+					myObject[i] = item;
+					i++;
+				}
+			});
+			res.jsonp(myObject);
+		}
+	});
+};
+*/
 
-/*PusManagement.find().populate({
- path: 'run_log',
- match: {status: 'Failure'},
- select: 'runDate',
- options: { limit:1, sort: 'runDate'}
+	/*PusManagement.find().populate({
+		path: 'run_log',
+		match: {status: 'Failure'},
+		select: 'runDate',
+		options: { limit:1, sort: 'runDate'}
 
- }).exec(function (err, pusManagement) {
- if (err) return res.send(err);
- if (!pusManagement) return res.send(new Error('Failed to load Pus tests '));
- res.send(pusManagement);
- });
- };*/
+	}).exec(function (err, pusManagement) {
+		if (err) return res.send(err);
+		if (!pusManagement) return res.send(new Error('Failed to load Pus tests '));
+		res.send(pusManagement);
+	});
+};*/
 //http://localhost:3000/getRunlogDetailed?logPath=20150331_205104.953/LogFile.txt
 exports.getRunlogDetailed = function(req,res) {
 	var logPath = req.param('logPath');
@@ -673,100 +723,100 @@ exports.process_log= function(req, res) {
 	//Get PUS record
 	PusManagement.findOne().where('name').equals(PUSName).populate('user', 'displayName').select({'name': 1, 'team': 1})
 		.exec(function (FetchPusErr, pusManagement) {
-			if (FetchPusErr) return res.send(FetchPusErr);
-			if (!pusManagement) return res.send(new Error('Failed to load Pus tests ' + PUSName));
-			var baseUrl = 'http://172.29.40.51:8080/view/'.concat(pusManagement.team).concat('Team/job/').concat(container).concat('/ws/')
-				.concat(PUSNameShortName).concat('/');
-			var runHistory = baseUrl.concat('RunHistory.xml');
-			var request = require('request');
-			request(runHistory, function (error, response, body) {
-				if (!error && response.statusCode === 200) {
-					var parseString = require('xml2js').parseString;
-					parseString(body, function (parseStringErr, result) {
-						var runString = result.runHistory.run[0], RunDate = runString.RunDate[0], Status = runString.Status[0],
-							Duration = runString.Duration[0], Errors = runString.Errors[0], Warnings = runString.Warnings[0],
-							Exceptions = runString.Exceptions[0], Successes = runString.Successes[0], LogFile = runString.LogFile[0],
-							ReturnValue = runString.ReturnValue[0], ErrorMessage = runString.ErrorMessage[0],
-							detailedUrl = baseUrl.concat(LogFile);
-						request(detailedUrl, function (error, response, detailed) {
-							if (!error && response.statusCode === 200) {
-								//add a record to detailed schema
-								var detailed_log_record = new detailed_log();
-								detailed_log_record.PUSName = PUSName;
-								detailed_log_record.logFilePath = LogFile;
-								detailed_log_record.content = detailed;
-								detailed_log_record.save(function (errSave, detailed_log_record) {
-									var newlogFile_id = detailed_log_record._id;
+		if (FetchPusErr) return res.send(FetchPusErr);
+		if (!pusManagement) return res.send(new Error('Failed to load Pus tests ' + PUSName));
+		var baseUrl = 'http://172.29.40.51:8080/view/'.concat(pusManagement.team).concat('Team/job/').concat(container).concat('/ws/')
+			.concat(PUSNameShortName).concat('/');
+		var runHistory = baseUrl.concat('RunHistory.xml');
+		var request = require('request');
+		request(runHistory, function (error, response, body) {
+			if (!error && response.statusCode === 200) {
+				var parseString = require('xml2js').parseString;
+				parseString(body, function (parseStringErr, result) {
+					var runString = result.runHistory.run[0], RunDate = runString.RunDate[0], Status = runString.Status[0],
+						Duration = runString.Duration[0], Errors = runString.Errors[0], Warnings = runString.Warnings[0],
+						Exceptions = runString.Exceptions[0], Successes = runString.Successes[0], LogFile = runString.LogFile[0],
+						ReturnValue = runString.ReturnValue[0], ErrorMessage = runString.ErrorMessage[0],
+						detailedUrl = baseUrl.concat(LogFile);
+					request(detailedUrl, function (error, response, detailed) {
+						if (!error && response.statusCode === 200) {
+							//add a record to detailed schema
+							var detailed_log_record = new detailed_log();
+							detailed_log_record.PUSName = PUSName;
+							detailed_log_record.logFilePath = LogFile;
+							detailed_log_record.content = detailed;
+							detailed_log_record.save(function (errSave, detailed_log_record) {
+								var newlogFile_id = detailed_log_record._id;
 
-									/*db.col.aggregate([
-									 {$match: {_id: 1}}
-									 {$unwind: '$students'},
-									 {$match: {'students.name': 'jeff'}},
-									 {$group: {_id: '$_id', students: {$push: '$students'}}}
-									 ])*/
-									PusManagement.aggregate([
-										{$match: {'_id':pusManagement._id}},
-										{$unwind: '$run_log'},
-										{$match: {'run_log.runDate': new Date(RunDate)}},
-										{$group: {_id: '$_id', run_log: {$push: '$run_log'}}}
-									]).exec(function (FetchPusErr, pus) {
-										if (FetchPusErr) return res.send(FetchPusErr);
-										if (!pusManagement) return res.send(new Error('Failed to load Pus tests ' + PUSName));
-										//console.log(pus.length);
-										if (pus.length === 0) {
-											PusManagement.findByIdAndUpdate(pusManagement._id, {
-													$push: {
-														run_log: {
-															'runDate': new Date(RunDate),
-															'status': Status,
-															'runBuildNo': runBuildNo,
-															'logFilePath': LogFile,
-															'duration': Duration,
-															'errorNumbers': Errors,
-															'warnings': Warnings,
-															'exceptions': Exceptions,
-															'successes': Successes,
-															'returnValue': ReturnValue,
-															'errorMessage': ErrorMessage,
-															'logFile': newlogFile_id
-														}
+								/*db.col.aggregate([
+									{$match: {_id: 1}}
+									{$unwind: '$students'},
+									{$match: {'students.name': 'jeff'}},
+									{$group: {_id: '$_id', students: {$push: '$students'}}}
+								])*/
+								PusManagement.aggregate([
+									{$match: {'_id':pusManagement._id}},
+									{$unwind: '$run_log'},
+									{$match: {'run_log.runDate': new Date(RunDate)}},
+									{$group: {_id: '$_id', run_log: {$push: '$run_log'}}}
+								]).exec(function (FetchPusErr, pus) {
+									if (FetchPusErr) return res.send(FetchPusErr);
+									if (!pusManagement) return res.send(new Error('Failed to load Pus tests ' + PUSName));
+									//console.log(pus.length);
+									if (pus.length === 0) {
+										PusManagement.findByIdAndUpdate(pusManagement._id, {
+												$push: {
+													run_log: {
+														'runDate': new Date(RunDate),
+														'status': Status,
+														'runBuildNo': runBuildNo,
+														'logFilePath': LogFile,
+														'duration': Duration,
+														'errorNumbers': Errors,
+														'warnings': Warnings,
+														'exceptions': Exceptions,
+														'successes': Successes,
+														'returnValue': ReturnValue,
+														'errorMessage': ErrorMessage,
+														'logFile': newlogFile_id
 													}
-												}, {safe: true, new: true}, function (findByIdAndUpdateErr, obj) {
-													if (findByIdAndUpdateErr) throw findByIdAndUpdateErr;
-													//res.status(200).json(obj);
 												}
-											);//End of findByIdAndUpdate
-											PusManagement.findByIdAndUpdate(pusManagement._id, {PUSStatus: Status, runStatus: 1 },
-												{safe: true, new: true}, function (findByIdAndUpdateErr, obj) {
-													if (findByIdAndUpdateErr) throw findByIdAndUpdateErr;
-													//res.status(200).json(obj);
-												});
-											res.send('');//OK, end of data process.
+											}, {safe: true, new: true}, function (findByIdAndUpdateErr, obj) {
+												if (findByIdAndUpdateErr) throw findByIdAndUpdateErr;
+												//res.status(200).json(obj);
+											}
+										);//End of findByIdAndUpdate
+										PusManagement.findByIdAndUpdate(pusManagement._id, {PUSStatus: Status, runStatus: 1 },
+											{safe: true, new: true}, function (findByIdAndUpdateErr, obj) {
+												if (findByIdAndUpdateErr) throw findByIdAndUpdateErr;
+												//res.status(200).json(obj);
+											});
+										res.send('');//OK, end of data process.
 
-											//process errSave of save detailed_log_record
-											if (errSave) {
-												return res.status(400).send({
-													message: errorHandler.getErrorMessage(errSave)
-												});
-											} // End of processing errSave of save detailed_log_record
-										} else { ////End of pus.length === 0
-											res.send('data is collected ago!, just skip it');
-										}
-									});
+										//process errSave of save detailed_log_record
+										if (errSave) {
+											return res.status(400).send({
+												message: errorHandler.getErrorMessage(errSave)
+											});
+										} // End of processing errSave of save detailed_log_record
+									} else { ////End of pus.length === 0
+										res.send('data is collected ago!, just skip it');
+									}
 								});
-							}else{
-								res.send('Failed get' + detailedUrl);
-							}//end of if response.statusCode === 200
-						});
+							});
+						}else{
+							res.send('Failed get' + detailedUrl);
+						}//end of if response.statusCode === 200
 					});
-				} else{
-					PusManagement.findByIdAndUpdate(pusManagement._id, { runStatus: 0, PUSStatus:''},
-						{safe: true, new: true}, function (findByIdAndUpdateErr, obj) {
-							if (findByIdAndUpdateErr) throw findByIdAndUpdateErr;
-							res.status(200).json(obj);
-						});
-					res.send('Failed get' + runHistory);
-				}//end of if response.statusCode === 200
-			});
+				});
+			} else{
+				PusManagement.findByIdAndUpdate(pusManagement._id, { runStatus: 0, PUSStatus:''},
+					{safe: true, new: true}, function (findByIdAndUpdateErr, obj) {
+						if (findByIdAndUpdateErr) throw findByIdAndUpdateErr;
+						//res.status(200).json(obj);
+					});
+				res.send('Failed get' + runHistory);
+			}//end of if response.statusCode === 200
 		});
+	});
 };
